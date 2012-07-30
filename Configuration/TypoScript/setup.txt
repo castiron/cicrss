@@ -1,0 +1,25 @@
+plugin.tx_cicrss.settings {
+	defaults {
+		moreText = more
+	}
+}
+
+plugin.tx_cicrss._CSS_DEFAULT_STYLE (
+	input.f3-form-error {
+		background-color:#FF9F9F;
+		border: 1px #FF0000 solid;
+	}
+
+	.tx-cicrss-pi1 table {
+		border-collapse:separate;
+		border-spacing:10px;
+	}
+
+	.tx-cicrss-pi1 table th {
+		font-weight:bold;
+	}
+
+	.tx-cicrss-pi1 table td {
+		vertical-align:top;
+	}
+)

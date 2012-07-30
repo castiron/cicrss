@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for the CIC RSS Feed extension in the FRONTEND</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_cicrss_domain_model_feed">RSS Feed</label>
+			<label index="tx_cicrss_domain_model_feed.title">Feed Title</label>
+			<label index="tx_cicrss_domain_model_feed.address">Feed Address</label>
+			<label index="tx_cicrss_domain_model_feed.update_interval">Update Interval</label>
+		</languageKey>
+	</data>
+</T3locallang>
