@@ -33,7 +33,8 @@ class Tx_Cicrss_Domain_Repository_ArticleRepository extends Tx_Extbase_Persisten
 			$articleObj->setTeaser($spArticle->get_content());
 			$articleObj->setPermalink($spArticle->get_permalink());
 			$articleObj->setDate($spArticle->get_date());
-			$articleObj->setAuthorName($spArticle->get_author()->get_name());
+			$author = $spArticle->get_author();
+			if ($author) $articleObj->setAuthorName($author->get_name());
 			$articles->attach($articleObj);
 		}
 		return $articles;
