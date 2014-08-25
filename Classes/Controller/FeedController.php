@@ -86,7 +86,14 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 
 		// render the selected view, but only if we have articles to render
 		if($this->settings['template'] && count($articles) > 0) {
-			return $this->view->render($this->settings['template']);
+			$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+			$path = t3lib_div::getFileAbsFileName($extbaseFrameworkConfiguration['view']['templateRootPath']).'/Feed/'.ucfirst($this->settings['template']).'.html';
+			if(file_exists($path)) {
+				$this->view->setTemplatePathAndFilename($path);
+			} else {
+				// TODO: Consider throwing an exception here. This would happen if a user set a view on a type but the file didn't exist.
+			}
+			return $this->view->render();
 		} else {
 			return '';
 		}

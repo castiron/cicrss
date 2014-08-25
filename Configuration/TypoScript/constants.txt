@@ -1,0 +1,10 @@
+plugin.tx_cicrss {
+	view {
+		templateRootPath = EXT:cicrss/Resources/Private/Templates/
+		partialRootPath = EXT:cicrss/Resources/Private/Partials/
+		layoutRootPath = EXT:cicrss/Resources/Private/Layouts/
+	}
+	persistence {
+		storagePid =
+	}
+}

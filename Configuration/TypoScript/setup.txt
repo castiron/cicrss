@@ -23,3 +23,14 @@ plugin.tx_cicrss._CSS_DEFAULT_STYLE (
 		vertical-align:top;
 	}
 )
+
+plugin.tx_cicrss {
+	view {
+		layoutRootPath = {$plugin.tx_cicrss.view.layoutRootPath}
+		partialRootPath = {$plugin.tx_cicrss.view.partialRootPath}
+		templateRootPath = {$plugin.tx_cicrss.view.templateRootPath}
+	}
+	persistence {
+		storagePid = {$plugin.tx_cicrss.persistence.storagePid}
+	}
+}
