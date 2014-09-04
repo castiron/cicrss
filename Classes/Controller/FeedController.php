@@ -72,6 +72,9 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 
 		// iterate over the feeds, get articles, pass to view
 		foreach($feeds as $feedKey => $feed) {
+			if(!is_object($feed)) {
+				break;
+			}
 			if($this->settings['clearCache']) {
 				$this->updateInterval = 0;
 			} else {
