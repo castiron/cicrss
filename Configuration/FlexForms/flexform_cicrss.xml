@@ -71,6 +71,10 @@
 							<config>
 								<type>select</type>
 								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">Default</numIndex>
+										<numIndex index="1">default</numIndex>
+									</numIndex>
 									<numIndex index="1" type="array">
 										<numIndex index="0">Home Page</numIndex>
 										<numIndex index="1">home</numIndex>
