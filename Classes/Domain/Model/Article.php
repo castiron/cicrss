@@ -226,27 +226,45 @@ class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEnt
 		return $this->images;
 	}
 
-    /**
-     * Get image with dimensions closest to ration.
-     */
-    public function getFirstImageUrl() {
-        $image = $this->images[0];
-//        foreach($this->images as $image) {
-            preg_match( '/<img.*?(src\=[\'|"]{0,1}.*?[\'|"]{0,1})[\s|>]{1}/i', $image, $src );
+	/**
+	 * Get image with dimensions closest to ration.
+	 */
+	public function getFirstImageUrl() {
+		$dom = new DOMDocument();
+		$dom->loadHTML($this->images[0]);
 
-			preg_match( '/<img.*?(height\=[\'|"]{0,1}.*?[\'|"]{0,1})[\s|>]{1}/i', $image, $height );
-			preg_match( '/<img.*?(width\=[\'|"]{0,1}.*?[\'|"]{0,1})[\s|>]{1}/i', $image, $width );
-			$height = substr( substr( str_replace( 'height=', '', $height[1] ), 0, -1 ), 1 );
-			$width = substr( substr( str_replace( 'width=', '', $width[1] ), 0, -1 ), 1 );
+		$image = $dom->getElementsByTagName('img')->item(0);
+		if (!$image) return null;
 
-            preg_match('/^src\="(.*)?"/', $src[1], $imgSrc);
-            if($imgSrc[1]) {
-                $imgUrl = $imgSrc[1];
-            }
-//        }
-        if($imgUrl && $height >= $this->minimumImageHeight && $width >= $this->minimumImageWidth) {
-            return $imgUrl;
-        }
+		// First, attempt to get the largest image height/width from the a srcset attribute
+		$srcset = $image->getAttribute('srcset');
+		if ($srcset) {
+			$sizeUrls = explode(',', $srcset);
+			if (count($sizeUrls)) {
+				foreach (array_reverse($sizeUrls) as $url) {
+					$width = array_pop(explode(' ', $url));
+					$width = intval(preg_replace('/(\D+)/', '', $width));
+					if ($width > $this->minimumImageWidth) return $url;
+				}
+			}
+		} else {
+			// Attempt to get image width and height from the img tag
+			$src = $image->getAttribute('src');
+			$width = intval($image->getAttribute('width'));
+			$height = intval($image->getAttribute('height'));
+			// If the img tag didn't have height & width attributes, look for a resize parameter
+			if (!$width || !$height) {
+				$parts = parse_url($src);
+				parse_str($parts['query'], $query);
+				if ($resize = $query['resize']) {
+					list($width, $height) = explode(',', $resize);
+				}
+			}
+			if ($width > $this->minimumImageWidth && $height > $this->minimumImageWidth) {
+				return $src;
+			}
+		}
+        return null;
     }
 
 	/**
