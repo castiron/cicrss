@@ -1,4 +1,6 @@
 <?php
+namespace CIC\Cicrss\Domain\Model;
+use \TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /***************************************************************
 *  Copyright notice
 *
@@ -23,6 +25,8 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+
+
 /**
  * RSS Feed Article
  *
@@ -30,7 +34,7 @@
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEntity {
+class Article extends AbstractEntity {
 
 	/**
 	* headline
@@ -230,9 +234,10 @@ class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEnt
 	 * Get image with dimensions closest to ration.
 	 */
 	public function getFirstImageUrl() {
-		$dom = new DOMDocument();
+		$dom = new \DOMDocument();
 		$dom->loadHTML($this->images[0]);
 
+        /** @var \DOMElement $image */
 		$image = $dom->getElementsByTagName('img')->item(0);
 		if (!$image) return null;
 
@@ -273,6 +278,7 @@ class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEnt
 	 */
 
 	public function getPostContentImage() {
+        $content = '';
 		$images = $this->images;
 		if($images) {
 			$firstImage = $images[0];
@@ -305,9 +311,6 @@ class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEnt
 				$content = '<img src="' . $src . '" width="' . $new_width . '" height="' . $new_height . '" class="align-left thumbnail" />';
 			}
 		}
-		if(!$content) {
-			$content = '';
-		}
 
 		return $content;
 	}
@@ -326,4 +329,3 @@ class Tx_Cicrss_Domain_Model_Article extends Tx_Extbase_DomainObject_AbstractEnt
 	}
 
 }
-?>

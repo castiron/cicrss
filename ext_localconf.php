@@ -3,8 +3,8 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-Tx_Extbase_Utility_Extension::configurePlugin(
-	$_EXTKEY,
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+	"CIC.$_EXTKEY",
 	'Cicrss',
 	array(
 		'Feed' => 'default',
@@ -18,5 +18,3 @@ Tx_Extbase_Utility_Extension::configurePlugin(
 if (!is_array($TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['cicrss_cache'])) {
     $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['cicrss_cache'] = array();
 }
-
-?>

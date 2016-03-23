@@ -1,13 +1,17 @@
 <?php
 
+namespace CIC\Cicrss\Domain\Repository;
+
 /**
- * Repository for Tx_Cicrss_Domain_Model_Article
- *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class ArticleRepository
+ * @package CIC\Cicrss\Domain\Repository
  */
-class Tx_Cicrss_Domain_Repository_ArticleRepository extends Tx_Extbase_Persistence_Repository {
+class ArticleRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+    /**
+     * @var \CIC\Cicrss\Service\FeedService
+     * @inject
+     */
+    var $feedService;
 
 	/**
      * Retrieve articles
@@ -19,15 +23,15 @@ class Tx_Cicrss_Domain_Repository_ArticleRepository extends Tx_Extbase_Persisten
 	 * @return mixed A collection of article objects.
 	 */
 	public function getArticlesFromFeedService($start, $length, $updateInterval = 3600, $feedDefaultUpdateInterval, $feedAddress) {
-		$this->feedService = $this->objectManager->get('Tx_Cicrss_Service_FeedService');
 		$this->feedService->setFeedUrl($feedAddress);
 
-		$objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_ObjectManager');
-		$articles = $objectManager->create('Tx_Extbase_Persistence_ObjectStorage');
+		$articles = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
 		$feedItems = $this->feedService->getFeedItems($start, $length, $updateInterval, $feedDefaultUpdateInterval);
 
-		foreach ($feedItems as $spArticle) {
-			$articleObj = $objectManager->create('Tx_Cicrss_Domain_Model_Article');
+        /** @var \SimplePie_Item $spArticle */
+        foreach ($feedItems as $spArticle) {
+            /** @var \CIC\Cicrss\Domain\Model\Article $articleObj */
+			$articleObj = $this->objectManager->get('CIC\\Cicrss\\Domain\\Model\\Article');
 			$articleObj->setHeadline($spArticle->get_title());
 			$articleObj->setContent($spArticle->get_content());
 			$articleObj->setTeaser($spArticle->get_content());
@@ -40,4 +44,3 @@ class Tx_Cicrss_Domain_Repository_ArticleRepository extends Tx_Extbase_Persisten
 		return $articles;
 	}
 }
-?>

@@ -1,41 +1,27 @@
 <?php
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2010 Zach Davis <zach@castironcoding.com>, Cast Iron Coding, Inc
-*
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+namespace CIC\Cicrss\Controller;
+use CIC\Cicrss\Domain\Model\Feed;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use \TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
- * Controller for the Feed object
- *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * Class FeedController
+ * @package CIC\Cicrss\Controller
  */
-class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_ActionController {
+class FeedController extends ActionController {
 
 	/**
-	 * @var Tx_Cicrss_Domain_Repository_FeedRepository
+	 * @var \CIC\Cicrss\Domain\Repository\FeedRepository
+     * @inject
 	 */
 	protected $feedRepository;
+
+    /**
+     * @var \CIC\Cicrss\Domain\Repository\ArticleRepository
+     * @inject
+     */
+    protected $articleRepository;
 
 	/**
 	 * @var int The amount of time, in seconds, that passes between cache refreshes.
@@ -48,9 +34,6 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 	 * @return void
 	 */
 	protected function initializeAction() {
-		$this->feedRepository = t3lib_div::makeInstance('Tx_Cicrss_Domain_Repository_FeedRepository');
-		$this->articleRepository = t3lib_div::makeInstance('Tx_Cicrss_Domain_Repository_ArticleRepository');
-
 		if(!$this->settings['moreText']) {
 			$this->settings['moreText'] = $this->settings['defaults']['moreText'];
 		}
@@ -70,8 +53,14 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 			$feeds['secondaryFeed'] = $this->feedRepository->findByUid($this->settings['secondaryFeedRec']);
 		}
 
+        $articles = array();
+
 		// iterate over the feeds, get articles, pass to view
-		foreach($feeds as $feedKey => $feed) {
+        /**
+         * @var string $feedKey
+         * @var Feed $feed
+         */
+        foreach($feeds as $feedKey => $feed) {
 			if(!is_object($feed)) {
 				break;
 			}
@@ -82,15 +71,15 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 			}
 			$feedDefaultUpdateInterval = $feed->getUpdateInterval();
 			$length = $this->settings[$feedKey.'Length'];
-			$articles = $this->articleRepository->getArticlesFromFeedService(NULL,$length,$this->updateInterval,$feedDefaultUpdateInterval, $feed->getAddress());
+            $articles = $this->articleRepository->getArticlesFromFeedService(NULL, $length, $this->updateInterval, $feedDefaultUpdateInterval, $feed->getAddress());
 			$this->view->assign($feedKey,$feed);
 			$this->view->assign($feedKey.'Articles',$articles);
 		}
 
 		// render the selected view, but only if we have articles to render
 		if($this->settings['template'] && count($articles) > 0) {
-			$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-			$path = t3lib_div::getFileAbsFileName($extbaseFrameworkConfiguration['view']['templateRootPath']).'/Feed/'.ucfirst($this->settings['template']).'.html';
+            $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+            $path = GeneralUtility::getFileAbsFileName($extbaseFrameworkConfiguration['view']['templateRootPath']) . '/Feed/' . ucfirst($this->settings['template']) . '.html';
 			if(file_exists($path)) {
 				$this->view->setTemplatePathAndFilename($path);
 			} else {
@@ -101,6 +90,4 @@ class Tx_Cicrss_Controller_FeedController extends Tx_Extbase_MVC_Controller_Acti
 			return '';
 		}
 	}
-
 }
-?>
