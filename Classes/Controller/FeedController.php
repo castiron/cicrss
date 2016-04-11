@@ -70,7 +70,8 @@ class FeedController extends ActionController {
                 $this->updateInterval = $feed->getUpdateInterval();
             }
             $feedDefaultUpdateInterval = $feed->getUpdateInterval();
-            $length = $this->settings[$feedKey.'Length'];
+            $configLength = $this->settings[$feedKey.'Length'];
+            $length = $configLength ? $configLength : 10;
             $articles = $this->articleRepository->getArticlesFromFeedService(NULL, $length, $this->updateInterval, $feedDefaultUpdateInterval, $feed->getAddress());
             $this->view->assign($feedKey,$feed);
             $this->view->assign($feedKey.'Articles',$articles);
