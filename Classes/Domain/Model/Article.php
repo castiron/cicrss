@@ -246,8 +246,9 @@ class Article extends AbstractEntity {
 		if ($srcset) {
 			$sizeUrls = explode(',', $srcset);
 			if (count($sizeUrls)) {
-				foreach (array_reverse($sizeUrls) as $url) {
-					$width = array_pop(explode(' ', $url));
+				foreach (array_reverse($sizeUrls) as $sizeUrl) {
+                    $sizeUrl = trim($sizeUrl);
+				    list($url, $width) = explode(' ', $sizeUrl);
 					$width = intval(preg_replace('/(\D+)/', '', $width));
 					if ($width > $this->minimumImageWidth) return $url;
 				}
